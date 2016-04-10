@@ -374,7 +374,7 @@ BuildPriceTimeSeries <- function(benchmarkSymbol, universeSymbolList, src="file"
 }
 
 BuildFundamentalTimeSeries <- function(universeSymbolList, src="file", fileDir="", fileType="csv") {
-  # TODO(Ben): Potentially catch the symbols that cannot be loaded:
+  # TODO: Potentially catch the symbols that cannot be loaded:
   #            print(paste(universeSymbolList[i]," not loaded!")); failedSymbols <- c(failedSymbols, universeSymbolList[i]);
 
   returnObject <- ResidualIncomeValue(universeSymbolList[1])
@@ -422,7 +422,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
   # Returns:
   #
   #
-  # TODO(Ben):
+  # TODO:
   #  - Remove 10 entry load limitation
   #  - Properly accunt for inclusions and removals in index not only for additions ... run some update_list
   #  - Thing about what is best in terms of connecting different periods for optimization, may be have seperate periods for each index change
@@ -653,7 +653,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     sp1500Value <- na.locf(sp1500Value)
 
     # Plot some chart is required use: plot.zoo(sp1500Price[,2], col=2); lines.default(index(sp1500ValueCopy[!is.na(sp1500ValueCopy[,1]),1]), sp1500ValueCopy[!is.na(sp1500ValueCopy[,1]),1], col=3)
-    # TODO(Ben): Check that the curruptedPriceDataList does not include all symbols due to missing NAs...
+    # TODO: Check that the curruptedPriceDataList does not include all symbols due to missing NAs...
     sp1500PriceColAligned <- sp1500Price[,(!names(sp1500Price) %in% c(curruptedValueDataList, curruptedPriceDataList))] # Exclude data which did not yield results
     sp1500ValueColAligned <- sp1500Value[,(!names(sp1500Value) %in% c(curruptedValueDataList, curruptedPriceDataList))] # Exclude data which did not yield results
 
@@ -675,8 +675,8 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
 
     numberOfPeriods = nrow(sp1500PriceColAlignedMonthy)
 
-    # TODO(Ben): Rewrite using rollapply()
-    # TODO(Ben): Allow daily rebalance ...
+    # TODO: Rewrite using rollapply()
+    # TODO: Allow daily rebalance ...
     optWeights <- sp1500PriceColAlignedMonthy
     optWeights[,1:ncol(optWeights)] <- 0
 
