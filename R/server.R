@@ -2,7 +2,7 @@
 # Run time control parameters
 # setwd("/home/rstudio") #TODO: uncomment for deployment
 executionPath <- "../"
-
+source(".pwd")
 #####
 # Loading required code/packages
 library(shiny)
