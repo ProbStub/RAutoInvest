@@ -1,0 +1,33 @@
+structure(list(UserID = c("0", "42", "8989", "8989", "8989"), 
+    HorizonID = c("0", "1", "1", "1", "1"), HorizonGoalName = c("0", 
+    "Retirement saving", "Retirement savings", "Retirement savings", 
+    "Retirement savings"), InvestStartDate = c("0", "2015-08-15", 
+    "16643", "16643", "16643"), InvestDurationYears = c("0", 
+    "24", "23", "23", "23"), InitialInvestAmt = c("0", "1e+05", 
+    "1e+06", "1e+05", "1e+05"), PeriodIncomeAmt = c("0", "1e+05", 
+    "40000", "40000", "80000"), PeriodSaveRate = c("0", "0.2", 
+    "0.1781", "0.1781", "0.1781"), PeriodInflation = c("0", "0.02", 
+    "0.58045975609756", "0.58045975609756", "0.58045975609756"
+    ), PeriodGovYield = c("0", "0.02", "0.0197", "0.0197", "0.0197"
+    ), ReturnTargetPct = c("0", "TRUE", "0.552349028947654", 
+    "0.694760605073504", "0.740498209391284"), SingleTargetAmt = c("0", 
+    "2e+06", "TRUE", "TRUE", "TRUE"), ReturnTargetAmt = c("0", 
+    "0.13", "175068376802.446", "175068376802.446", "350136753604.891"
+    ), RiskAbility = c("0", "1", "1", "1", "1"), RiskWillingness = c("0", 
+    "1", "1", "1", "1"), RiskTollerance = c("0", "1", "1", "1", 
+    "1"), IncomeTaxRate = c("0", "0.2", "0.10862", "0.10862", 
+    "0.10862"), CapitalTaxRate = c("0", "0.2", "0.19985", "0.19985", 
+    "0.19985"), SectorExclusionList = c("0", "", "NA", "NA", 
+    "NA"), SectorReturnList = c("0", "", "NA", "NA", "NA"), LiquidityNeedsAmt = c("0", 
+    "25000", "6666.66666666667", "6666.66666666667", "13333.3333333333"
+    ), ActiveInvestUniverse = c("0", "SectorETF", "SectorETF", 
+    "SectorETF", "SectorETF"), ActiveInvestStrategy = c("0", 
+    "statistical", "statistical", "statistical", "statistical"
+    )), .Names = c("UserID", "HorizonID", "HorizonGoalName", 
+"InvestStartDate", "InvestDurationYears", "InitialInvestAmt", 
+"PeriodIncomeAmt", "PeriodSaveRate", "PeriodInflation", "PeriodGovYield", 
+"ReturnTargetPct", "SingleTargetAmt", "ReturnTargetAmt", "RiskAbility", 
+"RiskWillingness", "RiskTollerance", "IncomeTaxRate", "CapitalTaxRate", 
+"SectorExclusionList", "SectorReturnList", "LiquidityNeedsAmt", 
+"ActiveInvestUniverse", "ActiveInvestStrategy"), row.names = c(NA, 
+5L), class = "data.frame")
