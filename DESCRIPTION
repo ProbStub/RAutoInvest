@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2016-04-10
 Author: ProbStub
 Maintainer: ProbStub <ProbStub@users.noreply.github.com>
-Description: This package demonstrates the use of RMetrics fPortfolio tools and Shiny to build an automated investment tool for educatinal purpose, aka robo advisor tool.
+Description: This package demonstrates the use of RMetrics fPortfolio tools, Quandly and Shiny to build an automated investment tool for educatinal purpose, aka robo advisor tool.
 Depends: shiny, dygraphs, fPortfolio, urca, vars, zoo, BLCOP, RCurl, PerformanceAnalytics, Quandl
 Note: EDUCATIONAL MATERIAL, NO INVESTMENT OFFER OR RECOMMENDATION OR ADVICE, NOT ASSOCIATED WITH ANY EMPLOYER OR ORGANIZATION NOR ENDORSED BY ANY, MAY CONTAIN MATERIAL ERRORS
 License: GPL (>= 2)
