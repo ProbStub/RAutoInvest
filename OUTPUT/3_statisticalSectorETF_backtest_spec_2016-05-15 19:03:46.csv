@@ -1,0 +1,2 @@
+equidistWindowsNEXT_SPEC_ITEMMeanVarianceCVARNEXT_SPEC_ITEMemaSmoother
+list(horizon = "24m")NEXT_SPEC_ITEMlist(OptType = "CVAR", Est = "1", Solver = "1")NEXT_SPEC_ITEMlist(doubleSmoothing = TRUE, lambda = "12m", skip = 0, initialWeights = NULL)

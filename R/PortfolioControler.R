@@ -5,9 +5,9 @@
 ## Run time control parameters
 # setwd("/home/rstudio") #TODO: uncomment for deployment
 currentDate <- as.Date(Sys.Date())
-executionPath <- "../"
+executionPath <- "/home/rstudio/RAutoInvest/"
 source(paste(executionPath,"R/EquityPortfolioBuilder.R",sep=""))
-source(".pwd")
+source(paste(executionPath, ".pwd", sep=""))
 Quandl.api_key(yourQuandlCode)
 debugonce(PortfolioConstruction)
 start <- TRUE # If true this will start a regular user visit to the site
@@ -30,7 +30,7 @@ colnames(investmentHorizons) <- c("UserID", # Globally unique ID of client
                                   "ReturnTargetPct", # Return rate: (ReturnTargetAmt/InitialInvestmentAmt)/(1-CapitalTaxRate) or Accrual-Equivalent-After-Tax-Returns or user specified
                                   "SingleTargetAmt", # Determine if client saves to receive an annuity of a lump sum: TRUE (default), FALSE
                                   "ReturnTargetAmt", # If SingleTargetAmt is TRUE set return amount to global MSCI 10y return (default) or ask for input  else: Present value of 60% of TotalDisclosedIncome for the duration of years after RetirementAge for the CurrentAge cohort at discount rate of 10year inflation+goverment bond returns in domicile country, ask for user specification of PV inputs
-                                                     # assumedInf <- 0.01; assumedGovRate=0.015; assumedInc <- 100000; assumedCF <- rep(((assumedInc)*(1+assumedInf)^10)*(1-newPeriodSaveRate),times = 10); sum(sapply(seq(from=1,to = 10, by=1), function(x) (assumedCF[x]*(1+assumedInf)^x)/(1+assumedGovRate)^x)) # TODO: get historic government bond yields and inflation rates, use expected life for times=/to= values
+                                  # assumedInf <- 0.01; assumedGovRate=0.015; assumedInc <- 100000; assumedCF <- rep(((assumedInc)*(1+assumedInf)^10)*(1-newPeriodSaveRate),times = 10); sum(sapply(seq(from=1,to = 10, by=1), function(x) (assumedCF[x]*(1+assumedInf)^x)/(1+assumedGovRate)^x)) # TODO: get historic government bond yields and inflation rates, use expected life for times=/to= values
                                   "RiskAbility", # Expessed in standard deviation of ActiveInvestmentUniverse multiples: 1 (default), 2 (TotalDisclosedWealth/TotalDisclosedIncome > 10)
                                   "RiskWillingness", # Expessed in standard deviation of ActiveInvestmentUniverse multiples: 1 (default)
                                   "RiskTollerance", # Min(RiskAbility,RiskWillingness) or user specified with a warning
@@ -48,25 +48,25 @@ colnames(existingUsers) <-c("UserID", # Globally unique ID of client: cookieID (
                             "TotalDisclosedWealth", # How much the client says he owns
                             "TotalDisclosedIncome", # How much the client says he earnes per year
                             "SignUpStatus", # If pending, load all previously specified settings: pending (default), user
-                                  "CurrentAge", # Current age in years of client
-                                  "BirthDate", # Optional exact specification of client birth date
-                                  "RetirementAge", # When client plans to stop earning an income: 65 (default)
+                            "CurrentAge", # Current age in years of client
+                            "BirthDate", # Optional exact specification of client birth date
+                            "RetirementAge", # When client plans to stop earning an income: 65 (default)
                             "LifeExpectancy", # Expected years before death at time of birth: WorldBank estimate for the country or world everage or user input
-                                  "ProfileType", # Specifies how much engagement the use takes, derived during sign up or changed in user settings: basic (default, warn user about incomplete investor profile), detailed or advanced
-                                  "InvestType", # If individualist or spontaneous allow more risk willingness, determined by games, trading pattern or user settings: cautious (default), methodical, individualistic, spontaneous
-                                  "ClientType", # Largely matches investor type and determines which display and features are active and defaulted: adventurer (default, cautious), warrior (spontaneous), king (methodical and individualistic)
-                                  "ExhibitLossAversion", # If true warn of too conservative choices, determined by games, trading pattern or user settings: FALSE (default), TRUE
-                                  "ExhibitBiasedExpectations", # If true warn of irational risk taking, determined by games, trading pattern or user settings: FALSE (default), TRUE
-                                  "ExhibitMentalAccounting", # If true warn of portfolio context impact, trading pattern or user settings: FALSE (default), TRUE
-                                  "CurrentStageInLife", # The more early stage the more risk willingness allowed: foundation (default), accumulation, maintenance, distribution
-                                  "SourceOfWealth", # If entrepreneur or investor allow more risk willingness: income (default), inherited, windfall, investor, entrepreneur
-                                  "DomicileCountry", # Depending on domicile we may not offer services or different types of service or if we require special legal treatment
-                                  "AccountType", # Determines whether we bill user or not: free (default), basic, advanced
-                                  "EMail", # Primary client communication channel, determined form Google profile
-                                  "MobileNr", # Secondary client communication and required for two way authentication
-                                  "ActiveTwoFactorAuth", # Whether client wants to receive an SMS code before a log in is authorized: FALSE (default), TRUE
-                                  "ActiveAutoTrade", # Whether client want to execute trades automaticall: FALSE (default), TRUE
-                                  "ApplicableBroker") # Determines cost models when estimating trading cost: InteraktiveBroker, SwissQuote, etc.
+                            "ProfileType", # Specifies how much engagement the use takes, derived during sign up or changed in user settings: basic (default, warn user about incomplete investor profile), detailed or advanced
+                            "InvestType", # If individualist or spontaneous allow more risk willingness, determined by games, trading pattern or user settings: cautious (default), methodical, individualistic, spontaneous
+                            "ClientType", # Largely matches investor type and determines which display and features are active and defaulted: adventurer (default, cautious), warrior (spontaneous), king (methodical and individualistic)
+                            "ExhibitLossAversion", # If true warn of too conservative choices, determined by games, trading pattern or user settings: FALSE (default), TRUE
+                            "ExhibitBiasedExpectations", # If true warn of irational risk taking, determined by games, trading pattern or user settings: FALSE (default), TRUE
+                            "ExhibitMentalAccounting", # If true warn of portfolio context impact, trading pattern or user settings: FALSE (default), TRUE
+                            "CurrentStageInLife", # The more early stage the more risk willingness allowed: foundation (default), accumulation, maintenance, distribution
+                            "SourceOfWealth", # If entrepreneur or investor allow more risk willingness: income (default), inherited, windfall, investor, entrepreneur
+                            "DomicileCountry", # Depending on domicile we may not offer services or different types of service or if we require special legal treatment
+                            "AccountType", # Determines whether we bill user or not: free (default), basic, advanced
+                            "EMail", # Primary client communication channel, determined form Google profile
+                            "MobileNr", # Secondary client communication and required for two way authentication
+                            "ActiveTwoFactorAuth", # Whether client wants to receive an SMS code before a log in is authorized: FALSE (default), TRUE
+                            "ActiveAutoTrade", # Whether client want to execute trades automaticall: FALSE (default), TRUE
+                            "ApplicableBroker") # Determines cost models when estimating trading cost: InteraktiveBroker, SwissQuote, etc.
 ## Load support data sets
 if(initialize) {
   existingUsers <- rbind(existingUsers, c(42, 100000, 100000,"user", 42, "",65, 72, "basic", "cautious", "adventurer", FALSE, FALSE, FALSE,
@@ -313,7 +313,7 @@ if(start==TRUE) {
     newHorizonGoalName <- "Retirement savings"
     newInvestStartDate <- as.Date(Sys.Date()) # TODO: user input HERE
     userinvestdurationyears <- as.numeric(readline(paste("Your investment duration is assumed to be ", newInvestDurationYears,
-                                                " years (OK to accept; else type length in years): ", sep="")))
+                                                         " years (OK to accept; else type length in years): ", sep="")))
     if(userinvestdurationyears == "OK")
     {
       newInvestDurationYears <- newInvestDurationYears
@@ -419,6 +419,7 @@ if(start==TRUE) {
 
 ## save user data
 dput(paste(executionPath, "INPUT/existingUsers.data.R",sep=""))
+
 
 
 

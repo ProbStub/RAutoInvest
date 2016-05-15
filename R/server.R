@@ -1,13 +1,14 @@
 #####
 # Run time control parameters
 # setwd("/home/rstudio") #TODO: uncomment for deployment
-executionPath <- "../"
-source(".pwd")
+executionPath <- "/home/rstudio/RAutoInvest/"
+source("/home/rstudio/RAutoInvest/.pwd")
 #####
 # Loading required code/packages
 library(shiny)
 library(dygraphs)
-source(paste(executionPath,"R/EquityPortfolioBuilder.R",sep=""))
+source(paste(executionPath,"/R/EquityPortfolioBuilder.R",sep=""))
+source(paste(executionPath,"/R/PerformanceReporting.R",sep=""))
 
 #####
 # Global data structures
@@ -21,13 +22,15 @@ if(!file.exists(paste(executionPath, "INPUT/existingUsersCredentials.data.R",sep
   colnames(existingUsersCredentials) <- c("UserID", "UserName", "UserPassword", "UserEmail")
 }
 
+loggedInUserID <<- ""
+
 # Profile setting of existing users
 # All settings can be changed in user setting screen; Different degrees of information is collected depending on how deep the sign-up process proceeds
 if(file.exists(paste(executionPath, "INPUT/existingUsers.data.R",sep=""))) {
   existingUsers <- dget(paste(executionPath, "INPUT/existingUsers.data.R",sep=""))
 }
 if(!file.exists(paste(executionPath, "INPUT/existingUsers.data.R",sep=""))) {
-  existingUsers <- data.frame(t(rep(0,23)))
+  existingUsers <- data.frame(t(rep(0,24)))
   colnames(existingUsers) <-c("UserID", # Globally unique ID of client: cookieID (default), unique client ID
                               "TotalDisclosedWealth", # How much the client says he owns
                               "TotalDisclosedIncome", # How much the client says he earnes per year
@@ -133,18 +136,18 @@ shinyServer(function(input, output, session) {
             ))
   })
   navBar2 <- renderUI({
-      do.call(list,
-              list(
-                call("numericInput", "investAmount","Amount:", rv$investAmount, 0)
-              ))
+    do.call(list,
+            list(
+              call("numericInput", "investAmount","Amount:", rv$investAmount, 0)
+            ))
   })
   navBar3 <- renderUI({
     output$dummy3 <- renderText("Ready to invest?")
     do.call(list,
-              list(
-                call("textOutput", "dummy3"),
-                call("actionButton", "proposalBasic", "Go")
-              ))
+            list(
+              call("textOutput", "dummy3"),
+              call("actionButton", "proposalBasic", "Go")
+            ))
   })
   navBar4 <- renderUI({
     output$dummy4 <- renderText("Already a user?")
@@ -181,10 +184,21 @@ shinyServer(function(input, output, session) {
 
   # This is the home page content for logged-in user
   homeExistUserPage <- renderUI({
-    output$debugtext <- renderText(paste("HOME EXISTING USER",sep=""))
+    portfolioReturns <- DailyPortfolioReturnsPast(as.numeric(loggedInUserID)[2])
+    benchmarkReturns <- DailyBechmarkReturnsPast("ACWI","NASDAQ",as.numeric(loggedInUserID)[2])
+    largestCommonIndex <- index(na.omit(cbind(portfolioReturns[,1], benchmarkReturns)))
+
+    output$debugtext <- renderText(paste("HOME EXISTING USER SIGNIN", as.numeric(loggedInUserID)[2], sep=""))
+    output$startPageChart <- renderDygraph({
+      dygraph(cbind("Portfolio return" = portfolioReturns[largestCommonIndex,1],
+                    "Benchmark return (ACWI)" = benchmarkReturns[largestCommonIndex,]),
+              main = "Since inception portfolio performance") %>%
+        dyRangeSelector()
+    })
     do.call(list,
             list(
-              call("textOutput", "debugtext")
+              call("textOutput", "debugtext"),
+              call("dygraphOutput","startPageChart")
             ))
   })
 
@@ -204,14 +218,14 @@ shinyServer(function(input, output, session) {
     output$proposalBasicWeightChart <- renderDygraph({
       dygraph(zoo(rv$proposal$spSmooth$weights,
                   order.by = as.Date(row.names(rv$proposal$spSmooth$weights))),
-                  main = "Portfolio assets weights over time") %>%
+              main = "Portfolio assets weights over time") %>%
         dyRangeSelector()
     })
-      output$proposalBasicReturnChart <- renderDygraph({
-        dygraph(zoo(cbind(rv$proposal$spSmooth$portfolioReturns, rv$proposal$spSmooth$benchmarkReturns),
-                    order.by = as.Date(row.names(rv$proposal$spSmooth$portfolioReturns))),
-                main = "Portfolio vs benchmark returns over time") %>%
-          dyRangeSelector()
+    output$proposalBasicReturnChart <- renderDygraph({
+      dygraph(zoo(cbind(rv$proposal$spSmooth$portfolioReturns, rv$proposal$spSmooth$benchmarkReturns),
+                  order.by = as.Date(row.names(rv$proposal$spSmooth$portfolioReturns))),
+              main = "Portfolio vs benchmark returns over time") %>%
+        dyRangeSelector()
     })
     output$proposalBasicWealthProjectionChart <- renderDygraph({
       dygraph(zoo(rv$investAmount*(1+cbind(rv$proposal$spSmooth$portfolioReturns, rv$proposal$spSmooth$benchmarkReturns)),
@@ -528,7 +542,7 @@ shinyServer(function(input, output, session) {
     }
     backtestStartDate <- as.Date(paste((as.numeric(format(currentDate, "%Y"))-backtestDuration), format(currentDate,"%m-%d"), sep="-"))
     rv$proposal <<- PortfolioConstruction(type = paste(newActiveInvestStrategy,newActiveInvestUniverse, sep="")
-                          ,start_date = backtestStartDate, end_date = backtestEndDate, userid = newUserID)
+                                          ,start_date = backtestStartDate, end_date = backtestEndDate, userid = newUserID)
 
     # Setup of user interface
     output$mainpanelUI <- proposalBasicPage
@@ -646,6 +660,7 @@ shinyServer(function(input, output, session) {
       output$mainpanenavUI2 <- emptyElement
       output$mainpanenavUI3 <- emptyElement
       output$mainpanenavUI4 <- emptyElement
+      loggedInUserID <<- existingUsersCredentials[existingUsersCredentials[,2]==rv$userName & existingUsersCredentials[,2]==rv$userPassword,1]
     }
   })
 
@@ -683,3 +698,4 @@ shinyServer(function(input, output, session) {
   })
 
 })
+

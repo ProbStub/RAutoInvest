@@ -10,19 +10,19 @@ library(Quandl) # Required to load source data
 
 file_root_dir = ".."
 
-source(".pwd")
+source("/home/rstudio/RAutoInvest/.pwd")
 Quandl.api_key(yourQuandlCode)
 
 ResidualIncomeValue<- function(symbol)
 {
 
-# Deprecated
+  # Deprecated
 }
 
 ## Function to calculate return expectations from market prices
 # One period ahead forecast
 StatisticalVECMReturnEstimation <- function(x, ci, monthlyAssetPrices, assetNames, assetNumber)
-  {
+{
   data <- window(monthlyAssetPrices, start = start(monthlyAssetPrices), end = x)
   Lobs <- t(tail(data, 1))
   vec <- ca.jo(data, ecdet = "none", spec = "transitory")
@@ -92,7 +92,7 @@ FundamentalResidualIncomeReturnEstimation <- function(rfr, monthlyBenchmarkPrice
   inputDataType <- unique(c(class(index(monthlyAssetPrices)),class(index(monthlyBenchmarkPrices)),class(index(shsOut)),
                             class(index(eps)), class(index(bookValueOfEquity)), class(index(div))))
   if("yearmon" == inputDataType && length(inputDataType) == 1)
-    {
+  {
     periodDivisor <- 12
   } # TODO: Else throw an error!
 
@@ -240,8 +240,8 @@ BlackLittermanFundamental <- function(data, spec, constraints, backtest) # Input
   ## Assigning Black-Litterman (BL) estimator and coresponding parameters
   # Calculate the views in terms of estimated returns per asset
   # TODO: replace the StatisticalVECMReturnEstimation with a fundamental estimator, the VECM only works for a relatively small Investment universe
-#   ReturnEst <- lapply(AssetsTimeIdx, StatisticalVECMReturnEstimation, ci = 0.5,
-#                       monthlyAssetPrices = AssetMonthly, assetNames = AssetNameVect, assetNumber = AssetsNum)
+  #   ReturnEst <- lapply(AssetsTimeIdx, StatisticalVECMReturnEstimation, ci = 0.5,
+  #                       monthlyAssetPrices = AssetMonthly, assetNames = AssetNameVect, assetNumber = AssetsNum)
   ReturnEst <- FundamentalResidualIncomeReturnEstimation(rfr=rfr, monthlyBenchmarkPrices=Benchmark, monthlyAssetPrices=AssetMonthly[,2:ncol(AssetMonthly)],
                                                          annualShsOut=annualShsOut, annualEps=annualEps,
                                                          annualBookValueOfEquity=annualBookValueOfEquity, annualDiv=annualDiv)
@@ -309,7 +309,7 @@ BlackLittermanVECM <- function(data, spec, constraints, backtest) # Input parame
   #       URGENT FIX REQUIRED IF BL RI should work, possible investigation points: fat matrix (more columns then rows) and hence too little data and time frame
   AssetsTimeIdx <- index(AssetMonthly)[-c(1:(1+4*(ncol(AssetMonthly))))]
   ReturnEst <- lapply(AssetsTimeIdx, StatisticalVECMReturnEstimation, ci = 0.5,
-                    monthlyAssetPrices = AssetMonthly, assetNames = AssetNameVect, assetNumber = AssetsNum)
+                      monthlyAssetPrices = AssetMonthly, assetNames = AssetNameVect, assetNumber = AssetsNum)
   ReturnEst <- ReturnEst[-c(1:(1+4*(ncol(AssetMonthly))))]
 
   # Define matrix of BL-view per asset and time period in qv
@@ -433,19 +433,19 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
                     "INTU", "JW", "JW", "JW", "MAR", "MATW", "MGAM", "MOG", "MOG", "MOG", "NANO", "NOG", "PETS", "POWI", "ROSE", "SCOR", "SIAL",
                     "SKYW", "SLAB", "SMRT", "STMP", "STRA", "SYNA", "TIME", "TMP", "TRAK", "TRIP", "TRMB", "TSCO", "TW", "UTIW", "WIN", "WM", "WPG")
 
-  SP1500_Comp <- read.csv("~/Documents/Financial data/SP/SP1500_Comp.csv")
-  SP500_Comp <- read.csv("~/Documents/Financial data/SP/SP500_Comp.csv")
+  SP1500_Comp <- read.csv(paste(executionPath,"INPUT/SP1500_Comp.csv", sep=""))
+  SP500_Comp <- read.csv(paste(executionPath,"INPUT/SP1500_Comp.csv", sep=""))
 
   regionETF <- c("EWA", "EWK", "EWZ", "EWC", "ECH", "FXI", "ICOL", "EWQ", "EWG",
-               "EWH", "INDA", "EIDO", "EWI", "EWJ", "EWM", "EWW", "EWN", "EPHE",
-               "IWM", "EWS","EZA", "EWP", "EWD", "EWL", "THD", "TUR",
-               "EWU", "EUSA")
+                 "EWH", "INDA", "EIDO", "EWI", "EWJ", "EWM", "EWW", "EWN", "EPHE",
+                 "IWM", "EWS","EZA", "EWP", "EWD", "EWL", "THD", "TUR",
+                 "EWU", "EUSA")
   regionETFNames <- c("iShares Australia", "iShares Belgium", "iShares Brazil", "iShares Canada",
-                   "iShares China", "iShares Chile", "iShares Colombia", "iShares France", "iShares Germany",
-                   "iShares Hong Kong", "iShares India", "iShares Indonesia", "iShares Italy",
-                   "iShares Japan", "iShares Malaysia", "iShares Mexico", "iShares Netherlands", "iShares Philippines",
-                   "iShares Russia", "iShares Singapore","iShares South Africa", "iShares Spain", "iShares Sweden",
-                   "iShares Switzerland", "iShares Thailand", "iShares Turkey", "iShares UK", "iShares US")
+                      "iShares China", "iShares Chile", "iShares Colombia", "iShares France", "iShares Germany",
+                      "iShares Hong Kong", "iShares India", "iShares Indonesia", "iShares Italy",
+                      "iShares Japan", "iShares Malaysia", "iShares Mexico", "iShares Netherlands", "iShares Philippines",
+                      "iShares Russia", "iShares Singapore","iShares South Africa", "iShares Spain", "iShares Sweden",
+                      "iShares Switzerland", "iShares Thailand", "iShares Turkey", "iShares UK", "iShares US")
 
   if(type == "statistical") {
     # TODO: eleminiate 10 symbol restriction
@@ -492,25 +492,25 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     return(myProposalAnalysis)
   }
   if(type == "statisticalRegionETF") {
-#     # TODO: eleminiate 10 symbol restriction
-#     bui <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[1:10],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-#     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-#     bui1 <- Quandl(c(paste("GOOG/AMEX_",regionETF[11],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-#     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-#     bui2 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[12:20],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-#     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-#     bui3 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[21:28],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-#     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     # TODO: eleminiate 10 symbol restriction
+    #     bui <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[1:10],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     bui1 <- Quandl(c(paste("GOOG/AMEX_",regionETF[11],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     bui2 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[12:20],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     bui3 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[21:28],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
     # SP500_Bench <- Quandl("YAHOO/INDEX_GSPC", collapse="daily",type="zoo", start_date = start_date, end_date = end_date, authcode = yourQuandlCode)
     MSCI_ACWI_Bench <- Quandl("GOOG/NYSE_ACWI", collapse="daily",type="zoo", start_date = start_date, end_date = end_date, authcode = yourQuandlCode)
-#     cui <- bui[,seq(4,ncol(bui),by=5)]
-#     cui1 <- bui1[,seq(4,ncol(bui1),by=5)]
-#     cui2 <- bui2[,seq(4,ncol(bui2),by=5)]
-#     cui3 <- bui3[,seq(4,ncol(bui3),by=5)]
+    #     cui <- bui[,seq(4,ncol(bui),by=5)]
+    #     cui1 <- bui1[,seq(4,ncol(bui1),by=5)]
+    #     cui2 <- bui2[,seq(4,ncol(bui2),by=5)]
+    #     cui3 <- bui3[,seq(4,ncol(bui3),by=5)]
     #SP500 <- BuildPriceTimeSeries(benchmarkSymbol = "SP500", universeSymbolList = as.character(SP500_Comp$Symbol[1:10]), fileDir = "~/Documents/Financial data/SP/")
-#     SP500 <- merge(MSCI_ACWI_Bench[,4], cui, cui1, cui2, cui3)
+    #     SP500 <- merge(MSCI_ACWI_Bench[,4], cui, cui1, cui2, cui3)
     SP500 <- merge(MSCI_ACWI_Bench[,4], window(dget(paste(file_root_dir,"/INPUT/regionETF.data.R",sep="")), start = start_date, end = end_date))
-#     colnames(SP500) <- c("SP500",regionETF[1:28])
+    #     colnames(SP500) <- c("SP500",regionETF[1:28])
     colnames(SP500) <- c("ACWI",names(SP500[,2:ncol(SP500)]))
     NameVect <- names(SP500)
     colNamesWithNAs <- colnames(SP500)[colSums(is.na(SP500[1,])) > 0]
@@ -565,78 +565,79 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     return(myProposalAnalysis)
   }
   if(type == "statisticalSectorETF") {
-  #     # TODO: eleminiate 10 symbol restriction
-  #     bui <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[1:10],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-  #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-  #     bui1 <- Quandl(c(paste("GOOG/AMEX_",regionETF[11],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-  #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-  #     bui2 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[12:20],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-  #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-  #     bui3 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[21:28],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
-  #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
-  # SP500_Bench <- Quandl("YAHOO/INDEX_GSPC", collapse="daily",type="zoo", start_date = start_date, end_date = end_date, authcode = yourQuandlCode)
-  MSCI_ACWI_Bench <- Quandl("GOOG/NYSE_ACWI", collapse="daily",type="zoo", start_date = start_date, end_date = end_date, authcode = yourQuandlCode)
-  #     cui <- bui[,seq(4,ncol(bui),by=5)]
-  #     cui1 <- bui1[,seq(4,ncol(bui1),by=5)]
-  #     cui2 <- bui2[,seq(4,ncol(bui2),by=5)]
-  #     cui3 <- bui3[,seq(4,ncol(bui3),by=5)]
-  #SP500 <- BuildPriceTimeSeries(benchmarkSymbol = "SP500", universeSymbolList = as.character(SP500_Comp$Symbol[1:10]), fileDir = "~/Documents/Financial data/SP/")
-  #     SP500 <- merge(MSCI_ACWI_Bench[,4], cui, cui1, cui2, cui3)
-  SP500 <- merge(MSCI_ACWI_Bench[,4], window(dget(paste(file_root_dir,"/INPUT/sectorETF.data.R",sep="")), start = start_date, end = end_date))
-  #     colnames(SP500) <- c("SP500",regionETF[1:28])
-  colnames(SP500) <- c("ACWI",names(SP500[,2:ncol(SP500)]))
-  NameVect <- names(SP500)
-  colNamesWithNAs <- colnames(SP500)[colSums(is.na(SP500[1,])) > 0]
-  colIDsWithNAs <- which(names(SP500) %in% colNamesWithNAs)
-  colIDsWithoutNAs <- which(!names(SP500) %in% c(colNamesWithNAs))
+    #     # TODO: eleminiate 10 symbol restriction
+    #     bui <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[1:10],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     bui1 <- Quandl(c(paste("GOOG/AMEX_",regionETF[11],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     bui2 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[12:20],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    #     bui3 <- Quandl(c(paste("GOOG/NYSEARCA_",regionETF[21:28],sep="")), column=4, collapse="daily", type="zoo", start_date = start_date, end_date = end_date,authcode = yourQuandlCode)
+    #     Sys.sleep(30) # Sleep to avoide Quandl API timeout
+    # SP500_Bench <- Quandl("YAHOO/INDEX_GSPC", collapse="daily",type="zoo", start_date = start_date, end_date = end_date, authcode = yourQuandlCode)
+    MSCI_ACWI_Bench <- Quandl("GOOG/NYSE_ACWI", collapse="daily",type="zoo", start_date = start_date, end_date = end_date, authcode = yourQuandlCode)
+    #     cui <- bui[,seq(4,ncol(bui),by=5)]
+    #     cui1 <- bui1[,seq(4,ncol(bui1),by=5)]
+    #     cui2 <- bui2[,seq(4,ncol(bui2),by=5)]
+    #     cui3 <- bui3[,seq(4,ncol(bui3),by=5)]
+    #SP500 <- BuildPriceTimeSeries(benchmarkSymbol = "SP500", universeSymbolList = as.character(SP500_Comp$Symbol[1:10]), fileDir = "~/Documents/Financial data/SP/")
+    #     SP500 <- merge(MSCI_ACWI_Bench[,4], cui, cui1, cui2, cui3)
+    SP500 <- merge(MSCI_ACWI_Bench[,4], window(dget(paste(file_root_dir,"/INPUT/sectorETF.data.R",sep="")), start = start_date, end = end_date))
+    #     colnames(SP500) <- c("SP500",regionETF[1:28])
+    colnames(SP500) <- c("ACWI",names(SP500[,2:ncol(SP500)]))
+    NameVect <- names(SP500)
+    # TOOD: Verify if the NA logic below is really doing what it is supposed to do!
+    colNamesWithNAs <- colnames(SP500)[colSums(is.na(SP500[1,])) > 0]
+    colIDsWithNAs <- which(names(SP500) %in% colNamesWithNAs)
+    colIDsWithoutNAs <- which(!names(SP500) %in% c(colNamesWithNAs))
 
-  SP500.RET4 <- as.timeSeries(returnSeries(SP500[,colIDsWithoutNAs]))
-  SP500.RET4 <- na.omit(SP500.RET4) # A single missing value will break the fPortfolio Optimizer since Sigma cannot be built...
-  colnames(SP500.RET4) <- NameVect[colIDsWithoutNAs] # Col Names must be properly set up to ensure smoother and performance function find the asset names
+    SP500.RET4 <- as.timeSeries(returnSeries(SP500))
+    SP500.RET4 <- na.omit(SP500.RET4) # A single missing value will break the fPortfolio Optimizer since Sigma cannot be built...
+    # colnames(SP500.RET4) <- NameVect[colIDsWithoutNAs] # Col Names must be properly set up to ensure smoother and performance function find the asset names
 
-  spSpec <- portfolioSpec()
-  spConstraints <- "LongOnly" # ETFs cannot be soled short
-  spConstraints <- c(paste("minW[1:",(ncol(SP500.RET4)-1),"] = 0.0",sep=""), #BFR list fix: NAssets
-                     paste("maxW[1:",(ncol(SP500.RET4)-1),"] = 0.3", sep="")) #"LongOnly" #BFR list fix: NAssets
-  spBacktest <- portfolioBacktest()
+    spSpec <- portfolioSpec()
+    spConstraints <- "LongOnly" # ETFs cannot be soled short
+    spConstraints <- c(paste("minW[1:",(ncol(SP500.RET4)-1),"] = 0.0",sep=""), #BFR list fix: NAssets
+                       paste("maxW[1:",(ncol(SP500.RET4)-1),"] = 0.3", sep="")) #"LongOnly" #BFR list fix: NAssets
+    spBacktest <- portfolioBacktest()
 
-  # Custom portfolio strategy definition
-  setStrategyFun(spBacktest) <- "MeanVarianceCVAR"
-  setStrategyParams(spBacktest) <- list(OptType = "CVAR", Est = "1", Solver = "1" )
+    # Custom portfolio strategy definition
+    setStrategyFun(spBacktest) <- "MeanVarianceCVAR"
+    setStrategyParams(spBacktest) <- list(OptType = "CVAR", Est = "1", Solver = "1" )
 
-  setWindowsHorizon(spBacktest) <- "24m"
-  setSmootherLambda(spBacktest) <- "12m"
-  spFormula <- (paste(paste(NameVect[colIDsWithoutNAs[2:length(colIDsWithoutNAs)]],collapse="+")))
-  #spFormula <- as.Formula((paste("SP500 ~ ",paste(NameVect[colIDsWithoutNAs[2:length(colIDsWithoutNAs)]],collapse="+")))) # must match colname in data set es the first which is index
-  #spFormula <- SP500~A+AA+AAPL+ABC+ABT+ACE+ACN+ACT+ADBE+ADI+ADM+ADP+ADS+ADSK+AEE+AEP+AES+AET+AFL+AGN+AIG+AIV+AIZ+AKAM+ALL+ALTR+ALXN+AMAT+AME+AMGN+AMP+AMT+AMZN+AN+AON+APA+APC+APD+APH+ARG+ATI+AVB+AVP+AVY+AXP+AZO+BA+BAC+BAX+BBBY+BBT+BBY+BCR+BDX+BEN+BF_B+BHI+BIIB+BK+BLK+BLL+BMS+BMY+BRCM+BRK_B+BSX+BTU+BWA+BXP+C+CA+CAG+CAH+CAM+CAT+CB+CBG+CBS+CCE+CCI+CCL+CELG+CERN+CF+CHK+CHRW+CI+CINF+CL+CLX+CMA+CMCSA+CME+CMG+CMI+CMS+CNP+CNX+COF+COG+COH+COL+COP+COST+CPB+CRM+CSC+CSCO+CSX+CTAS+CTL+CTSH+CTXS+CVC+CVS+CVX+D+DD+DE+DGX+DHI+DHR+DIS+DISCA+DLTR+DNB+DNR+DO+DOV+DOW+DRI+DTE+DTV+DUK+DVA+DVN+EA+EBAY+ECL+ED+EFX+EIX+EL+EMC+EMN+EMR+EOG+EQR+EQT+ESRX+ESS+ESV+ETFC+ETN+ETR+EW+EXC+EXPD+EXPE+F+FAST+FCX+FDO+FDX+FE+FFIV+FIS+FISV+FITB+FLIR+FLR+FLS+FMC+FOSL+FOXA+FRX+FSLR+FTI+FTR+GAS+GCI+GD+GE+GGP+GHC+GILD+GIS+GLW+GMCR+GME+GNW+GPC+GPS+GRMN+GS+GT+GWW+HAL+HAR+HAS+HBAN+HCBK+HCN+HCP+HD+HES+HIG+HOG+HON+HOT+HP+HPQ+HRB+HRL+HRS+HSP+HST+HSY+HUM+IBM+ICE+IFF+INTC+INTU+IP+IPG+IR+IRM+ISRG+ITW+IVZ+JBL+JCI+JEC+JNJ+JNPR+JOY+JPM+JWN+K+KEY+KIM+KLAC+KMB+KMX+KO+KR+KSS+KSU+L+LB+LEG+LEN+LH+LLL+LLTC+LLY+LM+LMT+LNC+LOW+LRCX+LUK+LUV+M+MA+MAC+MAR+MAS+MAT+MCD+MCHP+MCK+MCO+MDLZ+MDT+MET+MHFI+MHK+MKC+MMC+MMM+MNST+MO+MON+MOS+MRK+MRO+MS+MSFT+MSI+MTB+MU+MUR+MWV+MYL+NBL+NBR+NDAQ+NE+NEE+NEM+NFLX+NFX+NI+NKE+NOC+NOV+NRG+NSC+NTAP+NTRS+NU+NUE+NVDA+NWL+OI+OKE+OMC+ORCL+ORLY+OXY+PAYX+PBCT+PBI+PCAR+PCG+PCL+PCLN+PCP+PDCO+PEG+PEP+PETM+PFE+PFG+PG+PGR+PH+PHM+PKI+PLD+PLL+PNC+PNR+PNW+POM+PPG+PPL+PRGO+PRU+PSA+PVH+PWR+PX+PXD+QCOM+R+RAI+RDC+REGN+RF+RHI+RHT+RIG+RL+ROK+ROP+ROST+RRC+RSG+RTN+SBUX+SCG+SCHW+SE+SEE+SHW+SIAL+SJM+SLB+SNA+SNDK+SO+SPG+SPLS+SRCL+SRE+STI+STJ+STT+STX+STZ+SWK+SWN+SWY+SYK+SYMC+SYY+T+TAP+TE+TEG+TGT+THC+TIF+TJX+TMK+TMO+TROW+TRV+TSCO+TSN+TSO+TSS+TWX+TXN+TXT+TYC+UA+UNH+UNM+UNP+UPS+URBN+USB+UTX+VAR+VFC+VIAB+VLO+VMC+VNO+VRSN+VRTX+VTR+VZ+WAG+WAT+WDC+WEC+WFC+WFM+WHR+WIN+WLP+WM+WMB+WMT+WU+WY+WYN+WYNN+X+XEC+XEL+XL+XLNX+XOM+XRAY+XRX+YHOO+YUM+ZION+ZMH
-  funk <- c("","",""); funk[2] <- names(SP500)[1]; funk[3] <- "~"; funk[3] <- spFormula # where spFormula does not include "SP500~" which works now it only complains aboutthe benchmarkName!!!
-  spPortfolios <- portfolioBacktesting(formula = funk, data = SP500.RET4, spec = spSpec,
-                                       constraints = spConstraints, backtest = spBacktest, trace = FALSE)
-  setSmootherInitialWeights(spBacktest) <- rep(1/(ncol(SP500.RET4)-1), ncol(SP500.RET4)-1) # This is where an investor would insert his current allocation
-  spSmooth <- portfolioSmoothing(object = spPortfolios, backtest =spBacktest)
-  # Write results to storrage
-  write.csv(spSmooth$stats,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_stats_",Sys.time(),".csv",sep = ""))
-  write(paste(as.character(spSmooth$backtest@windows), as.character(spSmooth$backtest@strategy), as.character(spSmooth$backtest@smoother), sep = "NEXT_SPEC_ITEM"),
-        paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_spec_",Sys.time(),".csv",sep = ""))
-  write.csv(spSmooth$smoothWeights,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_weights_",Sys.time(),".csv",sep = ""))
-  write.csv(spSmooth$P,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_monthly_portfolio_returns_",Sys.time(),".csv",sep = ""))
-  write.csv(spSmooth$data,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_input_returns_",Sys.time(),".csv",sep = ""))
-  write.csv(spSmooth$monthlyBenchmark,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_benchmark_returns_",Sys.time(),".csv",sep = ""))
-  write.csv(spSmooth$monthlyAssets,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_asset_returns_",Sys.time(),".csv",sep = ""))
-  # Plot results to screen
-  backtestPlot(spSmooth)
-  spNetPerf <- netPerformance(spSmooth)
-  spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
+    setWindowsHorizon(spBacktest) <- "24m"
+    setSmootherLambda(spBacktest) <- "12m"
+    spFormula <- paste(colnames(SP500.RET4[,2:ncol(SP500.RET4)]),collapse="+")
+    #spFormula <- as.Formula((paste("SP500 ~ ",paste(NameVect[colIDsWithoutNAs[2:length(colIDsWithoutNAs)]],collapse="+")))) # must match colname in data set es the first which is index
+    #spFormula <- SP500~A+AA+AAPL+ABC+ABT+ACE+ACN+ACT+ADBE+ADI+ADM+ADP+ADS+ADSK+AEE+AEP+AES+AET+AFL+AGN+AIG+AIV+AIZ+AKAM+ALL+ALTR+ALXN+AMAT+AME+AMGN+AMP+AMT+AMZN+AN+AON+APA+APC+APD+APH+ARG+ATI+AVB+AVP+AVY+AXP+AZO+BA+BAC+BAX+BBBY+BBT+BBY+BCR+BDX+BEN+BF_B+BHI+BIIB+BK+BLK+BLL+BMS+BMY+BRCM+BRK_B+BSX+BTU+BWA+BXP+C+CA+CAG+CAH+CAM+CAT+CB+CBG+CBS+CCE+CCI+CCL+CELG+CERN+CF+CHK+CHRW+CI+CINF+CL+CLX+CMA+CMCSA+CME+CMG+CMI+CMS+CNP+CNX+COF+COG+COH+COL+COP+COST+CPB+CRM+CSC+CSCO+CSX+CTAS+CTL+CTSH+CTXS+CVC+CVS+CVX+D+DD+DE+DGX+DHI+DHR+DIS+DISCA+DLTR+DNB+DNR+DO+DOV+DOW+DRI+DTE+DTV+DUK+DVA+DVN+EA+EBAY+ECL+ED+EFX+EIX+EL+EMC+EMN+EMR+EOG+EQR+EQT+ESRX+ESS+ESV+ETFC+ETN+ETR+EW+EXC+EXPD+EXPE+F+FAST+FCX+FDO+FDX+FE+FFIV+FIS+FISV+FITB+FLIR+FLR+FLS+FMC+FOSL+FOXA+FRX+FSLR+FTI+FTR+GAS+GCI+GD+GE+GGP+GHC+GILD+GIS+GLW+GMCR+GME+GNW+GPC+GPS+GRMN+GS+GT+GWW+HAL+HAR+HAS+HBAN+HCBK+HCN+HCP+HD+HES+HIG+HOG+HON+HOT+HP+HPQ+HRB+HRL+HRS+HSP+HST+HSY+HUM+IBM+ICE+IFF+INTC+INTU+IP+IPG+IR+IRM+ISRG+ITW+IVZ+JBL+JCI+JEC+JNJ+JNPR+JOY+JPM+JWN+K+KEY+KIM+KLAC+KMB+KMX+KO+KR+KSS+KSU+L+LB+LEG+LEN+LH+LLL+LLTC+LLY+LM+LMT+LNC+LOW+LRCX+LUK+LUV+M+MA+MAC+MAR+MAS+MAT+MCD+MCHP+MCK+MCO+MDLZ+MDT+MET+MHFI+MHK+MKC+MMC+MMM+MNST+MO+MON+MOS+MRK+MRO+MS+MSFT+MSI+MTB+MU+MUR+MWV+MYL+NBL+NBR+NDAQ+NE+NEE+NEM+NFLX+NFX+NI+NKE+NOC+NOV+NRG+NSC+NTAP+NTRS+NU+NUE+NVDA+NWL+OI+OKE+OMC+ORCL+ORLY+OXY+PAYX+PBCT+PBI+PCAR+PCG+PCL+PCLN+PCP+PDCO+PEG+PEP+PETM+PFE+PFG+PG+PGR+PH+PHM+PKI+PLD+PLL+PNC+PNR+PNW+POM+PPG+PPL+PRGO+PRU+PSA+PVH+PWR+PX+PXD+QCOM+R+RAI+RDC+REGN+RF+RHI+RHT+RIG+RL+ROK+ROP+ROST+RRC+RSG+RTN+SBUX+SCG+SCHW+SE+SEE+SHW+SIAL+SJM+SLB+SNA+SNDK+SO+SPG+SPLS+SRCL+SRE+STI+STJ+STT+STX+STZ+SWK+SWN+SWY+SYK+SYMC+SYY+T+TAP+TE+TEG+TGT+THC+TIF+TJX+TMK+TMO+TROW+TRV+TSCO+TSN+TSO+TSS+TWX+TXN+TXT+TYC+UA+UNH+UNM+UNP+UPS+URBN+USB+UTX+VAR+VFC+VIAB+VLO+VMC+VNO+VRSN+VRTX+VTR+VZ+WAG+WAT+WDC+WEC+WFC+WFM+WHR+WIN+WLP+WM+WMB+WMT+WU+WY+WYN+WYNN+X+XEC+XEL+XL+XLNX+XOM+XRAY+XRX+YHOO+YUM+ZION+ZMH
+    funk <- c("","",""); funk[2] <- names(SP500)[1]; funk[3] <- "~"; funk[3] <- spFormula # where spFormula does not include "SP500~" which works now it only complains aboutthe benchmarkName!!!
+    spPortfolios <- portfolioBacktesting(formula = funk, data = SP500.RET4, spec = spSpec,
+                                         constraints = spConstraints, backtest = spBacktest, trace = FALSE)
+    setSmootherInitialWeights(spBacktest) <- rep(1/(ncol(SP500.RET4)-1), ncol(SP500.RET4)-1) # This is where an investor would insert his current allocation
+    spSmooth <- portfolioSmoothing(object = spPortfolios, backtest =spBacktest)
+    # Write results to storrage
+    write.csv(spSmooth$stats,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_stats_",Sys.time(),".csv",sep = ""))
+    write(paste(as.character(spSmooth$backtest@windows), as.character(spSmooth$backtest@strategy), as.character(spSmooth$backtest@smoother), sep = "NEXT_SPEC_ITEM"),
+          paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_spec_",Sys.time(),".csv",sep = ""))
+    write.csv(spSmooth$smoothWeights,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_weights_",Sys.time(),".csv",sep = ""))
+    write.csv(spSmooth$P,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_backtest_monthly_portfolio_returns_",Sys.time(),".csv",sep = ""))
+    write.csv(spSmooth$data,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_input_returns_",Sys.time(),".csv",sep = ""))
+    write.csv(spSmooth$monthlyBenchmark,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_benchmark_returns_",Sys.time(),".csv",sep = ""))
+    write.csv(spSmooth$monthlyAssets,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_asset_returns_",Sys.time(),".csv",sep = ""))
+    # Plot results to screen
+    backtestPlot(spSmooth)
+    spNetPerf <- netPerformance(spSmooth)
+    spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
 
-  # Prepare return object
-  myProposalAnalysis <- c()
-  myProposalAnalysis$spPortfolios <- spPortfolios
-  myProposalAnalysis$spSmooth <- spSmooth
-  myProposalAnalysis$spNetPerf <- spNetPerf
-  myProposalAnalysis$spBackTestStats <- spBackTestStats
+    # Prepare return object
+    myProposalAnalysis <- c()
+    myProposalAnalysis$spPortfolios <- spPortfolios
+    myProposalAnalysis$spSmooth <- spSmooth
+    myProposalAnalysis$spNetPerf <- spNetPerf
+    myProposalAnalysis$spBackTestStats <- spBackTestStats
 
-  return(myProposalAnalysis)
-}
+    return(myProposalAnalysis)
+  }
   if(type == "fundamentalOld") {
     sp1500Symbols <- as.character(SP1500_Comp$Symbol)
     sp1500Symbols <- sp1500Symbols[which(!sp1500Symbols %in% exclusionList)] # Exclude data for which we know not to have even fundamental data files
@@ -983,4 +984,5 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     # spSmooth$portfolioReturns # Really the cumulative returns since inception ...
   }
 }
+
 
