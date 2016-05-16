@@ -479,7 +479,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     setSmootherInitialWeights(spBacktest) <- rep(1/(ncol(SP500.RET4)-1), ncol(SP500.RET4)-1) # This is where an investor would insert his current allocation
     spSmooth <- portfolioSmoothing(object = spPortfolios, backtest =spBacktest)
 
-    backtestPlot(spSmooth)
+    #backtestPlot(spSmooth)
     spNetPerf <- netPerformance(spSmooth)
     spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
 
@@ -551,7 +551,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     write.csv(spSmooth$monthlyBenchmark,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_benchmark_returns_",Sys.time(),".csv",sep = ""))
     write.csv(spSmooth$monthlyAssets,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_asset_returns_",Sys.time(),".csv",sep = ""))
     # Plot results to screen
-    backtestPlot(spSmooth)
+    #backtestPlot(spSmooth)
     spNetPerf <- netPerformance(spSmooth)
     spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
 
@@ -625,7 +625,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     write.csv(spSmooth$monthlyBenchmark,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_benchmark_returns_",Sys.time(),".csv",sep = ""))
     write.csv(spSmooth$monthlyAssets,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_asset_returns_",Sys.time(),".csv",sep = ""))
     # Plot results to screen
-    backtestPlot(spSmooth)
+    #backtestPlot(spSmooth)
     spNetPerf <- netPerformance(spSmooth)
     spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
 
@@ -864,7 +864,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     write.csv(bookValueOfEquity,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_input_bookValueOfEquity_",Sys.time(),".csv",sep = ""))
     # TODO: Write the fundamental data to a file too
     # Plot results to screen
-    backtestPlot(spSmooth)
+    #backtestPlot(spSmooth)
     spNetPerf <- netPerformance(spSmooth)
     spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
 
@@ -965,7 +965,7 @@ PortfolioConstruction <- function(type="statistical", userid="42", selection="al
     write.csv(spSmooth$monthlyBenchmark,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_benchmark_returns_",Sys.time(),".csv",sep = ""))
     write.csv(spSmooth$monthlyAssets,paste(file_root_dir,"/OUTPUT/",userid,"_",type,"_monthly_asset_returns_",Sys.time(),".csv",sep = ""))
     # Plot results to screen
-    backtestPlot(spSmooth)
+    #backtestPlot(spSmooth)
     spNetPerf <- netPerformance(spSmooth)
     spBackTestStats <- backtestStats(spSmooth, FUN ="myCDaR")
 

@@ -41,5 +41,8 @@ b) sudo mkdir /var/run/shiny
 c) sudo chown shiny /var/run/shiny
 d) sudo chgrp shiny /var/run/shiny
 e) sudo chmod 755 /var/run/shiny
-c) sudo stop shiny-server
-d) sudo start shiny-server
+f) sudo stop shiny-server
+g) sudo usermod -G rstudio shiny
+h) sudo chmod 775 OUTPUT/
+i) sudo chmod 775 INPUT/
+j) sudo start shiny-server
