@@ -21,3 +21,25 @@ USAGE:
 3. Not all of the data files are updates through data collection, check that input values are in-line with your expectations
 4. To connect with a trading engine refer to the files generated in the OUTPUT directory, resp. write your own output as necessary (i.e., you may prefer weights rather than returns)
 5. Remove the investment horizon limit of two years. It's there for work with the limited data set.
+
+INSTALLATION:
+=============
+1. Ensure that you are either installing into /home/rstudio, define a symbolic link (ln -s) with such a name or change the executionPath argument in eah file
+2. If running on a shiny server, create a symbolic link to the installation directory in the shiny server directory (e.g. "/srv/shiny-server")
+3. Install dependent packages gloablly so that executing users have the packages available, for an ubuntu setup e.g.:
+a) sudo su - -c "R -e \"install.packages(c('PerformanceAnalytics', 'fPortfolio', 'urca', 'vars', 'zoo', 'BLCOP', 'Quandl', 'dygraphs', 'shiny', 'rmarkdown', 'uuid'), repos='http://cloud.r-project.org/')\""
+4. Pre-requisit installation of R, shiny server are required, for an ubuntu setup e.g.:
+a) sudo apt-get install gdebi-core
+b) wget http://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.3.0.403-amd64.deb
+c) sudo gdebi shiny-server-1.3.0.403-amd64.deb
+5. Setup your crontatb entries using the supplied example scripts (NOTE: outside web-server dir to avoid accidentially serving these to users), e.g.:
+a) crontab -e # add: 0 4 * * * sudo /home/rstudio/dailyDataBatch.sh
+b) crontab -e # add: 0 5 * * * sudo /home/rstudio/dailyOptimizeBatch.sh
+6. Ensure that the shiny server does not run as root but as the user shiny:
+a) sudo vi /etc/shiny-server/shiny-server.conf # change: run_as shiny;
+b) sudo mkdir /var/run/shiny
+c) sudo chown shiny /var/run/shiny
+d) sudo chgrp shiny /var/run/shiny
+e) sudo chmod 755 /var/run/shiny
+c) sudo stop shiny-server
+d) sudo start shiny-server
