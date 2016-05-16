@@ -7,6 +7,7 @@ source("/home/rstudio/RAutoInvest/.pwd")
 # Loading required code/packages
 library(shiny)
 library(dygraphs)
+library(uuid)
 source(paste(executionPath,"/R/EquityPortfolioBuilder.R",sep=""))
 source(paste(executionPath,"/R/PerformanceReporting.R",sep=""))
 
@@ -23,6 +24,9 @@ if(!file.exists(paste(executionPath, "INPUT/existingUsersCredentials.data.R",sep
 }
 
 loggedInUserID <<- ""
+newInvestmentHorizon <<- ""
+newExistingUsers <<- ""
+
 
 # Profile setting of existing users
 # All settings can be changed in user setting screen; Different degrees of information is collected depending on how deep the sign-up process proceeds
@@ -183,12 +187,13 @@ shinyServer(function(input, output, session) {
   })
 
   # This is the home page content for logged-in user
+  # TODO: Manage page loads of users without any performance to date.
   homeExistUserPage <- renderUI({
-    portfolioReturns <- DailyPortfolioReturnsPast(as.numeric(loggedInUserID)[2])
-    benchmarkReturns <- DailyBechmarkReturnsPast("ACWI","NASDAQ",as.numeric(loggedInUserID)[2])
+    portfolioReturns <- DailyPortfolioReturnsPast(loggedInUserID)
+    benchmarkReturns <- DailyBechmarkReturnsPast("ACWI","NASDAQ",loggedInUserID)
     largestCommonIndex <- index(na.omit(cbind(portfolioReturns[,1], benchmarkReturns)))
 
-    output$debugtext <- renderText(paste("HOME EXISTING USER SIGNIN", as.numeric(loggedInUserID)[2], sep=""))
+    output$debugtext <- renderText(paste("HOME EXISTING USER SIGNIN", loggedInUserID, sep=""))
     output$startPageChart <- renderDygraph({
       dygraph(cbind("Portfolio return" = portfolioReturns[largestCommonIndex,1],
                     "Benchmark return (ACWI)" = benchmarkReturns[largestCommonIndex,]),
@@ -393,7 +398,7 @@ shinyServer(function(input, output, session) {
     # Consolidate environment data
     rv$userAge <- input$userAge
     rv$investAmount <- input$investAmount
-    rv$newUserID <- as.integer(100*abs(rnorm(1,0,.2)))
+    rv$newUserID <- UUIDgenerate()
     # TODO: Remove artificial date setting
     rv$currentDate <- as.Date("2015-03-12")
 
@@ -448,11 +453,12 @@ shinyServer(function(input, output, session) {
     newActiveTwoFactorAuth <- FALSE # TODO: user input
     newActiveAutoTrade <- FALSE # TODO: user input
     newApplicableBroker <- "NA" # TODO: user input
-    existingUsers <- rbind(existingUsers, c(newUserID, newTotalDisclosedWealth, newTotalDisclosedIncome, newSignUpStatus, newCurrentAge, newBirthDate,
-                                            newRetirementAge, newLifeExpectany, newProfileType, newInvestType, newClientType, newExhibitLossAversion,
-                                            newExhibitBiasedExpectations, newExhibitMentalAccounting, newCurrentStageInLife,
-                                            newSourceOfWealth, newDomicileCountry, newAccountType, newEmail, newBitCoinAddress, newMobileNr, newActiveTwoFactorAuth,
-                                            newActiveAutoTrade, newApplicableBroker))
+    newExistingUsers <<- c(newUserID, newTotalDisclosedWealth, newTotalDisclosedIncome, newSignUpStatus, newCurrentAge, newBirthDate,
+                            newRetirementAge, newLifeExpectany, newProfileType, newInvestType, newClientType, newExhibitLossAversion,
+                            newExhibitBiasedExpectations, newExhibitMentalAccounting, newCurrentStageInLife,
+                            newSourceOfWealth, newDomicileCountry, newAccountType, newEmail, newBitCoinAddress, newMobileNr, newActiveTwoFactorAuth,
+                            newActiveAutoTrade, newApplicableBroker)
+    existingUsers <- rbind(existingUsers, newExistingUsers)
     # Generate a BASIC investment horizon for the new user
     newHorizonID <- 1
     newHorizonGoalName <- "Retirement savings"
@@ -525,11 +531,12 @@ shinyServer(function(input, output, session) {
     newLiquidityNeedsAmt <- (newPeriodIncome/12)*2 # TODO: user input
     newActiveInvestUniverse <- "SectorETF" # TODO: user input
     newActiveInvestStrategy <- "statistical" # TODO: user input
-    investmentHorizons <- rbind(investmentHorizons,c(newUserID, newHorizonID, newHorizonGoalName, newInvestStartDate, newInvestDurationYears,
-                                                     newInitialInvestAmt, newPeriodIncome, newPeriodSaveRate, newPeriodInflation, newPeriodGovYield,
-                                                     newReturnTargetPct,newSingleTargetAmt, newReturnTargetAmt, newRiskAbility, newRiskWillingness, newRiskTollerance,
-                                                     newIncomeTaxRate, newCapitalTaxrate, newSectorExclusionList, newSectorReturnList,
-                                                     newLiquidityNeedsAmt, newActiveInvestUniverse, newActiveInvestStrategy))
+    newInvestmentHorizon <<- c(newUserID, newHorizonID, newHorizonGoalName, newInvestStartDate, newInvestDurationYears,
+                               newInitialInvestAmt, newPeriodIncome, newPeriodSaveRate, newPeriodInflation, newPeriodGovYield,
+                               newReturnTargetPct,newSingleTargetAmt, newReturnTargetAmt, newRiskAbility, newRiskWillingness, newRiskTollerance,
+                               newIncomeTaxRate, newCapitalTaxrate, newSectorExclusionList, newSectorReturnList,
+                               newLiquidityNeedsAmt, newActiveInvestUniverse, newActiveInvestStrategy)
+    investmentHorizons <- rbind(investmentHorizons,newInvestmentHorizon)
     # Run a backtest simulation with BASIC client information
     backtestEndDate <- currentDate
 
@@ -599,11 +606,24 @@ shinyServer(function(input, output, session) {
     rv$newUserEmail <- input$newUserEmail
     rv$newUserBitCoinAddress <- input$newUserBitCoinAddress
     rv$newUserPassword <- input$newUserPassword
-    newUserID <- as.integer(100*abs(rnorm(1,0,.2)))
-    newUserCredentials <- c(newUserID, rv$newUserName, rv$newUserPassword, rv$newUserEmail, rv$newUserBitCoinAddress)
+    newUserID <- rv$newUserID
+    loggedInUserID <<- newUserID
+    newUserCredentials <- c(newUserID, rv$newUserName, rv$newUserPassword, rv$newUserEmail)
+
     existingUsersCredentials <- rbind(existingUsersCredentials, newUserCredentials)
     row.names(existingUsersCredentials) <- existingUsersCredentials[,1]
     dput(existingUsersCredentials,paste(executionPath, "INPUT/existingUsersCredentials.data.R",sep=""))
+
+    existingInvestmentHorizons <- rbind(investmentHorizons, newInvestmentHorizon)
+    dput(existingInvestmentHorizons, paste(executionPath, "INPUT/investmentHorizons.data.R",sep=""))
+
+    existingUsers <- rbind(existingUsers, newExistingUsers)
+    dput(existingInvestmentHorizons, paste(executionPath, "INPUT/existingUsers.data.R",sep=""))
+
+    output$navbarUI1 <- emptyElement
+    output$navbarUI2 <- emptyElement
+    output$navbarUI3 <- homeExistUserSettings
+    output$navbarUI4 <- navBar4LoggedIn
     output$mainpanelUI <- homeExistUserPage
     output$mainpanenavUI1 <- emptyElement
     output$mainpanenavUI2 <- emptyElement
@@ -660,7 +680,7 @@ shinyServer(function(input, output, session) {
       output$mainpanenavUI2 <- emptyElement
       output$mainpanenavUI3 <- emptyElement
       output$mainpanenavUI4 <- emptyElement
-      loggedInUserID <<- existingUsersCredentials[existingUsersCredentials[,2]==rv$userName & existingUsersCredentials[,2]==rv$userPassword,1]
+      loggedInUserID <<- existingUsersCredentials[existingUsersCredentials[,2]==rv$userName & existingUsersCredentials[,2]==rv$userPassword,1][2]
     }
   })
 

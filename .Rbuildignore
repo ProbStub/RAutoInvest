@@ -1,2 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+DataCollectorUtility.R
+PortfolioRunUtility.R
+INPUT/
+OUTPUT/
