@@ -2,6 +2,7 @@ library(PerformanceAnalytics)
 executionPath <- "/home/rstudio/RAutoInvest/"
 source(paste(executionPath, ".pwd", sep=""))
 
+# TODO: Compute proper ACCOUNT returns, since the current retuns are pure portfolio returns, disregarding cash-flow addition/withdrawal
 
 DailyPortfolioWeightsPast <- function (userId) {
 
@@ -205,6 +206,26 @@ DailyBechmarkReturnsPast <- function(bmTicker, bmTradingVenue, userId) {
   benchmarkReturns <- CalculateReturns(benchmarkPrice)
   benchmarkReturns <- na.fill(benchmarkReturns,0)
   return(benchmarkReturns)
+}
+
+CumPortfolioReturnsPast <- function(userId) {
+
+  portfolioReturns <- DailyPortfolioReturnsPast(userId)
+
+  # Compute cumulative returns
+  cumPortfolioReturns <- sapply(seq(1,ncol(portfolioReturns),1), function(x) cumprod(portfolioReturns[,x] + 1) - 1)
+  colnames(cumPortfolioReturns) <- colnames(portfolioReturns)
+  cumPortfolioReturns <- zoo(cumPortfolioReturns, index(portfolioReturns))
+  return(cumPortfolioReturns)
+}
+
+CumBechmarkReturnsPast <- function(bmTicker, bmTradingVenue, userId) {
+
+  benchmarkReturns <- DailyBechmarkReturnsPast(bmTicker, bmTradingVenue, userId)
+
+  # Compute cumulative returns
+  cumBechmarkReturns <- cumprod(benchmarkReturns + 1) - 1
+  return(cumBechmarkReturns)
 }
 
 

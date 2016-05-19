@@ -187,24 +187,52 @@ shinyServer(function(input, output, session) {
   })
 
   # This is the home page content for logged-in user
-  # TODO: Manage page loads of users without any performance to date.
   homeExistUserPage <- renderUI({
-    portfolioReturns <- DailyPortfolioReturnsPast(loggedInUserID)
-    benchmarkReturns <- DailyBechmarkReturnsPast("ACWI","NASDAQ",loggedInUserID)
-    largestCommonIndex <- index(na.omit(cbind(portfolioReturns[,1], benchmarkReturns)))
 
+    # Fetch data
+    portfolioWeights <- as.data.frame(DailyPortfolioWeightsPast(loggedInUserID))
+    portfolioWeights$Date <- rownames(portfolioWeights)
+    portfolioWeights <- portfolioWeights[,c(ncol(portfolioWeights), seq(1,ncol(portfolioWeights)-1,1))]
+    portfolioReturns <- DailyPortfolioReturnsPast(loggedInUserID)
+    cumPortfolioReturns <- CumPortfolioReturnsPast(loggedInUserID)
+    benchmarkReturnsACWI <- DailyBechmarkReturnsPast("ACWI","NASDAQ",loggedInUserID)
+    cumBenchmarkReturnsACWI <- CumBechmarkReturnsPast("ACWI","NASDAQ",loggedInUserID)
+
+    largestCommonIndex <- index(na.omit(cbind(portfolioReturns[,1], benchmarkReturnsACWI)))
+
+    # Link dats to visual elements
     output$debugtext <- renderText(paste("HOME EXISTING USER SIGNIN", loggedInUserID, sep=""))
-    output$startPageChart <- renderDygraph({
+
+    output$homeExistUserPageDailyReturnChart <- renderDygraph({
       dygraph(cbind("Portfolio return" = portfolioReturns[largestCommonIndex,1],
-                    "Benchmark return (ACWI)" = benchmarkReturns[largestCommonIndex,]),
-              main = "Since inception portfolio performance") %>%
+                    "Benchmark return (ACWI)" = benchmarkReturnsACWI[largestCommonIndex,]),
+              main = "Daily returns") %>%
         dyRangeSelector()
     })
+
+    output$homeExistUserPageCumReturnChart <- renderDygraph({
+      dygraph(cbind("Portfolio return" = cumPortfolioReturns[largestCommonIndex,1],
+                    "Benchmark return (ACWI)" = cumBenchmarkReturnsACWI[largestCommonIndex,]),
+              main = "Cumulative returns") %>%
+        dyRangeSelector()
+    })
+
+    output$homeExistUserPageWeightsTable <- renderDataTable({
+      portfolioWeights
+      })
+
+    # Display visual elements
     do.call(list,
-            list(
-              call("textOutput", "debugtext"),
-              call("dygraphOutput","startPageChart")
-            ))
+            list(call("textOutput", "debugtext")))
+    tabsetPanel(
+      tabPanel("Overview",do.call(list,list(call("dygraphOutput","homeExistUserPageDailyReturnChart")))), # TODO: Total assets, daily change (%, value), automatedinsights summary text, daily target weights, current positions, scales to visualize goal matching, recommended alternative managers (and thier matching)
+      tabPanel("Performance over time",do.call(list,list(call("dygraphOutput","homeExistUserPageCumReturnChart")))), # TODO: portfolio, benchmark (several options, custom BM creation), individual portfolio elements, cummulative, daily, contributions (sector, currency, asset class, region), overlays (recessions, momentum, bull/bear market), cashflow impacts visualization (in sector, asset class, region, cash account etc.)
+      #tabPanel("Portfolio structure",do.call(list,list(call("dygraphOutput","homeExistUserPageCumReturnChart")))), # TODO: chart + % for reginal allocation - timeline play button, bar chart for current sectors, chart for sector weights, bar chart for current currency, chart for currency weights, bar chart for current asset classes, chart for asset class weights
+      #tabPanel("Risk analysis",do.call(list,list(call("dygraphOutput","homeExistUserPageCumReturnChart")))), # TODO: VaR over time, Max drawdown over time, risk-factor exposure over time,
+      #tabPanel("Sources of return",do.call(list,list(call("dygraphOutput","homeExistUserPageCumReturnChart")))), # TODO: top-down brinson+FI table plus 12m roling chart,  multi-factor (smart beta factors + FI) table plus 12m roling chart
+      tabPanel("Trade history",do.call(list,list(call("dataTableOutput","homeExistUserPageWeightsTable"))))
+      # TODO: add additinal panels for performance over time, performance structure, risk analysis, trading history
+    )
   })
 
   # This is the settings button shown for existing users wehn logged-in
@@ -342,6 +370,7 @@ shinyServer(function(input, output, session) {
             list(
               call("actionButton", "signUpComplete", "Ready. To. Go.")
             ))
+
   })
 
   # This is the login page
